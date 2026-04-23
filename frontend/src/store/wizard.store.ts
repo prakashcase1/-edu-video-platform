@@ -68,7 +68,7 @@ export const useWizardStore = create<WizardStore>((set, get) => ({
 
   markStepComplete: (step) =>
     set((state) => ({
-      completedSteps: new Set([...state.completedSteps, step]),
+      completedSteps: new Set(Array.from(state.completedSteps).concat(step)),
     })),
 
   setProject: (project) => set({ project }),
