@@ -27,8 +27,8 @@ export default function ProjectDetailPage() {
     queryFn: () => projectsApi.get(id),
     refetchInterval: (query) => {
       const status = query.state.data?.status;
-      return status === 'PROCESSING' || status === 'QUEUED' ? 3000 : false;
-    },
+      return status !== 'COMPLETED' && status !== 'FAILED' ? 3000 : false;
+     },
   });
 
   const { data: rendering } = useQuery({
