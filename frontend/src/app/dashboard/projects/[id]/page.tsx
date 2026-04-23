@@ -96,7 +96,7 @@ export default function ProjectDetailPage() {
 
   const latestRendering = rendering || project.renderings?.[0];
   const videoUrl = latestRendering?.videoUrl;
-  const isProcessing = latestRendering?.status === 'PROCESSING' || latestRendering?.status === 'QUEUED';
+  const isProcessing = latestRendering?.status !== 'COMPLETED' && status !== 'FAILED'
   const progress = latestRendering?.progress || 0;
 
   return (
