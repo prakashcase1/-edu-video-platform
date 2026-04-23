@@ -35,7 +35,7 @@ export default function ProjectDetailPage() {
     queryFn: () => renderingApi.getStatus(id),
     refetchInterval: (query) => {
       const status = query.state.data?.status;
-      return status === 'QUEUED' || status === 'PROCESSING' ? 3000 : false;
+      return status !== 'COMPLETED' && status !== 'FAILED' ? 3000 : false;
     },
     enabled: !!project,
   });
@@ -96,7 +96,7 @@ export default function ProjectDetailPage() {
 
   const latestRendering = rendering || project.renderings?.[0];
   const videoUrl = latestRendering?.videoUrl;
-  const isProcessing = latestRendering?.status !== 'COMPLETED' && status !== 'FAILED'
+  const isProcessing = latestRendering?.status !== 'COMPLETED' && latestRendering?.status !== 'FAILED'
   const progress = latestRendering?.progress || 0;
 
   return (
