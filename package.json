@@ -1,0 +1,26 @@
+{
+  "name": "edu-video-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Educational Video Generation Platform",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:worker\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:worker": "cd worker && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../worker && npm install && cd ../frontend && npm install",
+    "build:all": "cd backend && npm run build && cd ../worker && npm run build && cd ../frontend && npm run build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:rebuild": "docker compose up -d --build",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:migrate:prod": "cd backend && npx prisma migrate deploy",
+    "db:seed": "cd backend && npx prisma db seed",
+    "db:studio": "cd backend && npx prisma studio",
+    "db:reset": "cd backend && npx prisma migrate reset"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

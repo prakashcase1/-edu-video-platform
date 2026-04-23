@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique @db.VarChar(191)
+  password      String         @db.VarChar(255)
+  name          String         @db.VarChar(191)
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  projects      Project[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @db.VarChar(500)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  title       String        @db.VarChar(200)
+  description String?       @db.Text
+  mode        VideoMode     @default(NO_FACE)
+  status      ProjectStatus @default(DRAFT)
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  script      Script?
+  slides      Slide[]
+  scenes      Scene[]
+  renderings  Rendering[]
+  avatar      AvatarConfig?
+  voiceConfig VoiceConfig?
+  shareToken  String?       @unique @db.VarChar(191)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("projects")
+}
+
+model Script {
+  id        String   @id @default(cuid())
+  content   String   @db.LongText
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("scripts")
+}
+
+model Slide {
+  id         String   @id @default(cuid())
+  filename   String   @db.VarChar(255)
+  storageKey String   @db.VarChar(500)
+  url        String?  @db.VarChar(1000)
+  order      Int
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sceneId    String?
+  scene      Scene?   @relation(fields: [sceneId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@map("slides")
+}
+
+model Scene {
+  id         String   @id @default(cuid())
+  order      Int
+  scriptText String   @db.Text
+  duration   Float?
+  audioKey   String?  @db.VarChar(500)
+  audioUrl   String?  @db.VarChar(1000)
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  slides     Slide[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("scenes")
+}
+
+model AvatarConfig {
+  id         String   @id @default(cuid())
+  avatarId   String   @db.VarChar(191)
+  avatarName String   @db.VarChar(191)
+  previewUrl String?  @db.VarChar(500)
+  projectId  String   @unique
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@map("avatar_configs")
+}
+
+model VoiceConfig {
+  id        String   @id @default(cuid())
+  voiceId   String   @db.VarChar(191)
+  voiceName String   @db.VarChar(191)
+  speed     Float    @default(1.0)
+  pitch     Float    @default(1.0)
+  language  String   @default("en") @db.VarChar(10)
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("voice_configs")
+}
+
+model Rendering {
+  id           String          @id @default(cuid())
+  jobId        String?         @unique @db.VarChar(191)
+  status       RenderingStatus @default(QUEUED)
+  progress     Int             @default(0)
+  videoKey     String?         @db.VarChar(500)
+  videoUrl     String?         @db.VarChar(1000)
+  duration     Float?
+  fileSize     BigInt?
+  errorMessage String?         @db.Text
+  projectId    String
+  project      Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@map("renderings")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum VideoMode {
+  NO_FACE
+  AVATAR
+}
+
+enum ProjectStatus {
+  DRAFT
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum RenderingStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}

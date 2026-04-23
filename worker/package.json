@@ -1,0 +1,35 @@
+{
+  "name": "edu-video-worker",
+  "version": "1.0.0",
+  "description": "Educational Video Generation Platform - Background Worker",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.499.0",
+    "@aws-sdk/s3-request-presigner": "^3.499.0",
+    "@prisma/client": "^5.9.1",
+    "axios": "^1.6.7",
+    "bullmq": "^5.2.1",
+    "dotenv": "^16.6.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "form-data": "^4.0.5",
+    "ioredis": "^5.3.2",
+    "msedge-tts": "^2.0.5",
+    "openai": "^4.26.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.11.10",
+    "@types/uuid": "^9.0.7",
+    "prisma": "^5.9.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}
